@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carrera de la Glucólisis</title>
+<style>
+:root{--bg:#fbfaf6;--ink:#163047;--muted:#60758a;--line:#d9e2e8;--blue:#147ea8;--blue2:#eaf4f8;--green:#168b68;--green2:#e9f7f1;--gold:#c78b12;--gold2:#fff6dc;--red:#b54a4a;--red2:#fdeeee;--card:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}button,input{font:inherit}.hidden{display:none!important}.wrap{max-width:1200px;margin:auto;padding:18px}.panel{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px rgba(20,48,71,.08)}
+#start{max-width:620px;margin:55px auto;padding:28px}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);font-size:14px;margin-top:5px}.label{font-size:14px;font-weight:800;display:block;margin-top:20px}.input{width:100%;margin-top:7px;padding:13px;border:1px solid #cbd5df;border-radius:12px;background:#fff}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:800}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.full{width:100%;margin-top:12px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.stats{display:flex;gap:7px;flex-wrap:wrap}.pill{padding:7px 10px;border-radius:999px;background:#eef3f6;font-size:12px;font-weight:800}.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.8fr);gap:15px;margin-top:15px}.map-panel{padding:14px;overflow:hidden}.map-title{font-size:17px;font-weight:800}.hint{font-size:12px;color:var(--muted);margin:3px 0 10px}.map-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}.map{display:block;min-width:760px;width:100%;height:auto}.side{padding:16px}.tag{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:var(--blue2);color:#075a78}.question{font-size:17px;font-weight:800;line-height:1.35;margin:11px 0}.choices{display:grid;gap:8px}.choice{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px;text-align:left;cursor:pointer}.choice:disabled{cursor:default}.choice.ok{background:var(--green2);border-color:var(--green)}.choice.no{background:var(--red2);border-color:var(--red)}.feedback{min-height:38px;margin-top:10px;font-size:13px;font-weight:800}.deck{display:grid;gap:7px;max-height:360px;overflow:auto;margin-top:8px}.card{padding:10px;border:1px dashed #b8c3cc;border-radius:12px;background:#fff;cursor:pointer;text-align:left}.card strong{display:block}.card span{font-size:11px;color:var(--muted)}.card:disabled{opacity:.45}.target-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.target{border:1px dashed #b8c3cc;border-radius:10px;padding:9px;background:#fff;cursor:pointer;font-size:12px;font-weight:800}.progress{height:8px;background:#e9eef2;border-radius:99px;overflow:hidden;margin-top:12px}.progress>div{height:100%;background:var(--blue);width:0}.final{max-width:720px;margin:45px auto;padding:28px;text-align:center}.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:20px 0}.result{padding:13px;background:#f4f7f8;border-radius:13px}.result b{display:block;font-size:22px;margin-top:3px}.small{font-size:11px;color:var(--muted)}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.side{order:-1}.result-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section id="start" class="panel">
+  <div style="font-size:12px;font-weight:800;color:var(--blue)">🧬 BIOQUÍMICA 1 · RETO INDIVIDUAL</div>
+  <div class="title" style="margin-top:8px">Carrera de la Glucólisis</div>
+  <div class="sub">Construye la vía, responde correctamente y llega a los dos piruvatos.</div>
+  <label class="label" for="studentName">Nombre del alumno</label>
+  <input id="studentName" class="input" maxlength="60" placeholder="Escribe tu nombre" autocomplete="off">
+  <div id="nameError" class="hidden" style="color:var(--red);font-size:12px;margin-top:7px">Escribe tu nombre para comenzar.</div>
+  <button id="startBtn" type="button" class="btn primary full">▶ Iniciar carrera</button>
+  <div class="small" style="margin-top:10px">Pregunta correcta: +1 perla · Molécula/enzima bien colocada: +1 perla extra.</div>
+</section>
+
+<section id="game" class="hidden">
+<header class="top">
+  <div><div style="font-size:22px;font-weight:800">CARRERA DE LA GLUCÓLISIS</div><div id="studentLabel" class="sub"></div></div>
+  <div class="stats">
+    <div class="pill">⏱ <span id="timer">00:00</span></div>
+    <div class="pill">Perlas <span id="pearlCount">0</span>/19</div>
+    <div class="pill">✓ <span id="correctCount">0</span>/12</div>
+    <div class="pill">⚡ ATP neto <span id="atpNet">0</span></div>
+    <div class="pill">NADH <span id="nadhCount">0</span></div>
+  </div>
+</header>
+<div class="layout">
+<section class="panel map-panel">
+  <div class="map-title">🟣 Collar de perlas metabólico</div>
+  <div class="hint">La bifurcación comienza en <b>RUPTURA</b> y las dos ramas llegan a dos piruvatos.</div>
+  <div class="map-wrap"><svg id="map" class="map" viewBox="0 0 760 1120" role="img" aria-label="Glucólisis como collar de perlas en Y desde ruptura hasta dos piruvatos">
+    <defs><filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".18"/></filter></defs>
+    <path d="M380 80 V420 C300 450 210 500 185 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round"/>
+    <path d="M380 420 C460 450 550 500 575 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round"/>
+    <g id="nodes"></g><g id="playerToken"></g>
+    <text x="380" y="35" text-anchor="middle" font-size="15" font-weight="800" fill="#60758a">FASE DE INVERSIÓN · −2 ATP</text>
+    <text x="380" y="470" text-anchor="middle" font-size="14" font-weight="800" fill="#b07800">RUPTURA · 1 × 6 C → 2 × 3 C</text>
+    <text x="380" y="1090" text-anchor="middle" font-size="17" font-weight="800" fill="#b07800">🏁 META · 2 PIRUVATOS</text>
+  </svg></div>
+  <div class="progress"><div id="progressBar"></div></div>
+</section>
+<aside class="panel side">
+  <div class="tag" id="taskType">PREGUNTA</div>
+  <div id="taskTitle" class="small" style="margin-top:7px"></div>
+  <div id="question" class="question"></div>
+  <div id="choices" class="choices"></div>
+  <div id="feedback" class="feedback" aria-live="polite"></div>
+  <button id="nextBtn" type="button" class="btn primary full hidden">Continuar →</button>
+  <hr style="border:0;border-top:1px solid var(--line);margin:15px 0">
+  <div style="font-weight:800;font-size:14px">🧬 Cartas de construcción</div>
+  <div class="small" style="margin-top:3px">Úsalas para ganar perlas extra colocando la molécula o enzima donde corresponde.</div>
+  <div id="deck" class="deck"></div>
+  <div id="targets" class="target-grid hidden"></div>
+  <button id="canvaBtn" type="button" class="btn full">🎨 Descargar plantilla para Canva</button>
+</aside>
+</div>
+</section>
+
+<section id="final" class="panel final hidden">
+  <div style="font-size:38px">🏁</div>
+  <h2 style="font-size:26px;margin:10px 0 0">¡Carrera terminada!</h2>
+  <div id="finalStudent" class="sub"></div>
+  <div class="result-grid">
+    <div class="result"><div class="small">Tiempo</div><b id="finalTime">00:00</b></div>
+    <div class="result"><div class="small">Aciertos</div><b id="finalCorrect">0/12</b></div>
+    <div class="result"><div class="small">Bonos</div><b id="finalBonus">0</b></div>
+    <div class="result"><div class="small">Perlas</div><b id="finalPearls">0/19</b></div>
+  </div>
+  <div class="panel" style="padding:15px">2 ATP invertidos → 4 ATP producidos → <b>2 ATP netos</b> + <b>2 NADH</b> + <b>2 piruvatos</b>.</div>
+  <button id="restartBtn" type="button" class="btn primary full">Jugar otra vez</button>
+</section>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function(){
+  'use strict';
+  var $=function(id){return document.getElementById(id)};
+  var state={name:'',q:0,correct:0,bonus:0,pearls:0,atpNet:0,nadh:0,start:0,timer:null,selectedCard:null,done:{}};
+  var questions=[
+    ['Ubicación','¿En qué lugar de la célula ocurre la glucólisis?',['En la mitocondria','En el citosol','En el núcleo'],1],
+    ['Visión general','¿La glucólisis necesita oxígeno directo para realizarse?',['Sí, es 100% aeróbica','No, no requiere oxígeno directo'],1],
+    ['Reactante','¿Cuál es el combustible principal con el que inicia y cuántos carbonos tiene?',['Glucosa (6 carbonos)','Piruvato (3 carbonos)','Lactato (3 carbonos)'],0],
+    ['Inversión','¿Qué ocurre con el ATP al inicio?',['Se producen 4 ATP','Se invierten 2 ATP','No se usa ATP'],1],
+    ['Hexocinasa','¿Para qué sirve fosforilar la glucosa?',['Para ayudar a atraparla en la célula','Para convertirla directamente en piruvato','Para eliminarla'],0],
+    ['Aldolasa','¿Qué hace la aldolasa?',['Rompe un compuesto de 6 C en triosas','Produce oxígeno','Consume NADH'],0],
+    ['NAD+','¿Qué hace NAD+ durante la glucólisis?',['Acepta electrones y se convierte en NADH','Se convierte en ATP','Rompe la glucosa'],0],
+    ['Triosas','¿Cuál continúa directamente y cuál debe convertirse?',['G3P continúa; DHAP debe convertirse','DHAP continúa; G3P debe convertirse'],0],
+    ['ATP bruto','¿Cuánto ATP se produce en bruto durante la fase de ganancia?',['2 ATP','4 ATP','36 ATP'],1],
+    ['ATP neto','Si se gastan 2 ATP y se producen 4 ATP, ¿cuál es la ganancia neta?',['4 ATP','2 ATP','0 ATP'],1],
+    ['Productos','¿Cuáles son los productos finales de la glucólisis?',['2 piruvatos + 2 ATP netos + 2 NADH','CO₂ y agua','1 lactato'],0],
+    ['Piruvato','¿Cuántos piruvatos se forman a partir de una glucosa?',['1','2','4'],1]
+  ];
+  var nodes=[
+    ['GLUCOSA','6 C',380,80],['G6P','Glucosa-6-P',380,150],['F6P','Fructosa-6-P',380,220],['F-1,6-BP','6 C · 2 P',380,290],['RUPTURA','6 C → 2×3 C',380,420],
+    ['DHAP','3 C',255,510],['G3P','3 C',185,600],['1,3-BPG','3 C',145,700],['3-PG','3 C',120,800],['2-PG','3 C',105,900],['PEP','3 C',100,980],['PIRUVATO 1','3 C',95,1050],
+    ['G3P','3 C',505,510],['1,3-BPG','3 C',575,600],['3-PG','3 C',615,700],['2-PG','3 C',640,800],['PEP','3 C',655,900],['PIRUVATO 2','3 C',665,980]
+  ];
+  var cards=[
+    ['G6P','Molécula','Después de glucosa',[1]],['F-1,6-BP','Molécula','Antes de ruptura',[3]],['DHAP','Molécula','Rama izquierda',[5]],['G3P','Molécula','Después de ruptura',[6,12]],['1,3-BPG','Molécula','Después de G3P',[7,13]],['3-PG','Molécula','Después de 1,3-BPG',[8,14]],['2-PG','Molécula','Después de 3-PG',[9,15]],['PEP','Molécula','Después de 2-PG',[10,16]],['Piruvato','Molécula','Final de cada rama',[11,17]],
+    ['Hexocinasa','Enzima','Glucosa → G6P',[1]],['PFK','Enzima','F6P → F-1,6-BP',[3]],['Aldolasa','Enzima','Ruptura',[4]],['GAPDH','Enzima','G3P → 1,3-BPG',[7,13]],['Fosfoglicerato cinasa','Enzima','1,3-BPG → 3-PG',[8,14]],['Piruvato cinasa','Enzima','PEP → piruvato',[10,16]]
+  ];
+  var stationLabels=['Glucosa → G6P','G6P → F6P','F6P → F-1,6-BP','Ruptura','DHAP','G3P izquierda','1,3-BPG izquierda','3-PG izquierda','2-PG izquierda','PEP izquierda','Piruvato 1','G3P derecha','1,3-BPG derecha','3-PG derecha','2-PG derecha','PEP derecha','Piruvato 2'];
+  function fmt(sec){var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+  function tick(){if(state.start)$('timer').textContent=fmt(Math.floor((Date.now()-state.start)/1000))}
+  function stats(){$('pearlCount').textContent=state.pearls;$('correctCount').textContent=state.correct;$('atpNet').textContent=state.atpNet;$('nadhCount').textContent=state.nadh;$('progressBar').style.width=(state.pearls/19*100)+'%'}
+  function draw(){var g=$('nodes');g.innerHTML='';nodes.forEach(function(n,i){var q=document.createElementNS('http://www.w3.org/2000/svg','g');var c=document.createElementNS('http://www.w3.org/2000/svg','circle');var r=(i===4||i>=11)?37:34;c.setAttribute('cx',n[2]);c.setAttribute('cy',n[3]);c.setAttribute('r',r);c.setAttribute('filter','url(#sh)');c.setAttribute('fill',i<state.pearls?'#e7f5ef':(i===state.pearls?'#eaf4f8':'#f7f8fa'));c.setAttribute('stroke',i<state.pearls?'#168b68':(i===state.pearls?'#147ea8':'#aeb9c4'));c.setAttribute('stroke-width',i===state.pearls?5:3);q.appendChild(c);var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',n[2]);t.setAttribute('y',n[3]-3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size',i>=11?'11':'12');t.setAttribute('font-weight','800');t.setAttribute('fill','#163047');t.textContent=n[0];q.appendChild(t);var s=document.createElementNS('http://www.w3.org/2000/svg','text');s.setAttribute('x',n[2]);s.setAttribute('y',n[3]+14);s.setAttribute('text-anchor','middle');s.setAttribute('font-size','9');s.setAttribute('fill','#60758a');s.textContent=n[1];q.appendChild(s);g.appendChild(q)});var idx=Math.min(state.pearls,nodes.length-1),n=nodes[idx];var tok=$('playerToken');tok.innerHTML='';var tc=document.createElementNS('http://www.w3.org/2000/svg','circle');tc.setAttribute('cx',n[2]);tc.setAttribute('cy',n[3]-48);tc.setAttribute('r',11);tc.setAttribute('fill','#147ea8');tc.setAttribute('stroke','#fff');tc.setAttribute('stroke-width',3);tok.appendChild(tc);var tt=document.createElementNS('http://www.w3.org/2000/svg','text');tt.setAttribute('x',n[2]);tt.setAttribute('y',n[3]-44);tt.setAttribute('text-anchor','middle');tt.setAttribute('font-size','8');tt.setAttribute('font-weight','800');tt.setAttribute('fill','#fff');tt.textContent='TÚ';tok.appendChild(tt);stats()}
+  function renderQ(){if(state.q>=questions.length){end();return}$('taskType').textContent='❓ PREGUNTA · +1 PERLA';$('taskTitle').textContent=questions[state.q][0];$('question').textContent=questions[state.q][1];$('feedback').textContent='';$('nextBtn').classList.add('hidden');var box=$('choices');box.innerHTML='';questions[state.q][2].forEach(function(o,i){var b=document.createElement('button');b.type='button';b.className='choice';b.textContent=String.fromCharCode(65+i)+') '+o;b.addEventListener('click',function(){answerQ(i,b)});box.appendChild(b)})}
+  function answerQ(i,b){var bs=[].slice.call(document.querySelectorAll('.choice'));bs.forEach(function(x){x.disabled=true});var ok=i===questions[state.q][3];if(ok){b.classList.add('ok');state.correct++;state.pearls++;if(state.q===9)state.atpNet=2;if(state.q===10)state.nadh=2;$('feedback').textContent='✓ Correcto. +1 perla.';$('feedback').style.color='var(--green)';draw()}else{b.classList.add('no');bs[questions[state.q][3]].classList.add('ok');$('feedback').textContent='✗ Incorrecto. Revisa el concepto y continúa.';$('feedback').style.color='var(--red)'}$('nextBtn').classList.remove('hidden');stats();$('nextBtn').onclick=function(){state.q++;renderQ()}}
+  function renderCards(){var deck=$('deck');deck.innerHTML='';cards.forEach(function(c,i){var b=document.createElement('button');b.type='button';b.className='card';b.disabled=!!state.done[i];b.innerHTML='<strong>'+c[0]+' · '+c[1]+'</strong><span>'+c[2]+' · +1 perla</span>';b.addEventListener('click',function(){selectCard(i)});deck.appendChild(b)})}
+  function selectCard(i){state.selectedCard=i;$('targets').classList.remove('hidden');$('targets').innerHTML='';$('feedback').textContent='Coloca '+cards[i][0]+' en la estación correcta.';$('feedback').style.color='var(--ink)';stationLabels.forEach(function(label,nodeIndex){var b=document.createElement('button');b.type='button';b.className='target';b.textContent=label;b.addEventListener('click',function(){placeCard(i,nodeIndex)});$('targets').appendChild(b)})}
+  function placeCard(i,nodeIndex){var ok=cards[i][3].indexOf(nodeIndex)>=0;if(ok){state.done[i]=true;state.bonus++;state.pearls=Math.min(19,state.pearls+1);$('feedback').textContent='🧬 ¡Bien colocado! +1 perla extra.';$('feedback').style.color='var(--green)';$('targets').classList.add('hidden');renderCards();draw();if(state.pearls>=19){$('nextBtn').textContent='🏁 Ver resultado';$('nextBtn').classList.remove('hidden');$('nextBtn').onclick=end}}else{$('feedback').textContent='No es esa estación. Inténtalo de nuevo.';$('feedback').style.color='var(--red)'}}
+  function end(){clearInterval(state.timer);$('game').classList.add('hidden');$('final').classList.remove('hidden');$('finalStudent').textContent='Jugador: '+state.name;$('finalTime').textContent=fmt(Math.floor((Date.now()-state.start)/1000));$('finalCorrect').textContent=state.correct+'/'+questions.length;$('finalBonus').textContent=state.bonus;$('finalPearls').textContent=state.pearls+'/19'}
+  function startGame(){var n=$('studentName').value.trim();if(!n){$('nameError').classList.remove('hidden');$('studentName').focus();return}$('nameError').classList.add('hidden');state.name=n;state.q=0;state.correct=0;state.bonus=0;state.pearls=0;state.atpNet=0;state.nadh=0;state.start=Date.now();$('studentLabel').textContent='Jugador: '+n;$('start').classList.add('hidden');$('final').classList.add('hidden');$('game').classList.remove('hidden');state.timer=setInterval(tick,250);draw();renderCards();renderQ();stats()}
+  function canva(){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 760 1120"><rect width="100%" height="100%" fill="#fbfaf6"/><text x="380" y="45" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#163047">CARRERA DE LA GLUCÓLISIS</text><path d="M380 80 V420 C300 450 210 500 185 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8"/><path d="M380 420 C460 450 550 500 575 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8"/>'+nodes.map(function(n,i){return '<g><circle cx="'+n[2]+'" cy="'+n[3]+'" r="34" fill="#f7f8fa" stroke="#aeb9c4" stroke-width="3"/><text x="'+n[2]+'" y="'+(n[3]-3)+'" text-anchor="middle" font-family="Arial" font-size="11" font-weight="800" fill="#163047">'+n[0]+'</text><text x="'+n[2]+'" y="'+(n[3]+14)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#60758a">'+n[1]+'</text></g>'}).join('')+'<text x="380" y="1090" text-anchor="middle" font-family="Arial" font-size="18" font-weight="800" fill="#b07800">META · 2 PIRUVATOS</text></svg>';var a=document.createElement('a');a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);a.download='plantilla_canva_carrera_glucolisis.svg';document.body.appendChild(a);a.click();a.remove()}
+  $('startBtn').addEventListener('click',startGame);$('studentName').addEventListener('keydown',function(e){if(e.key==='Enter')startGame()});$('canvaBtn').addEventListener('click',canva);$('restartBtn').addEventListener('click',function(){location.reload()});
+});
+</script>
+</body>
+</html>
