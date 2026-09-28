@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrera de la Glucólisis</title>
+<style>
+:root{--bg:#fbfaf6;--ink:#163047;--muted:#60758a;--line:#d9e2e8;--blue:#147ea8;--blue2:#eaf4f8;--green:#168b68;--green2:#e9f7f1;--gold:#c78b12;--gold2:#fff6dc;--red:#b54a4a;--red2:#fdeeee}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+button,input{font:inherit}.hidden{display:none!important}
+.wrap{max-width:1200px;margin:0 auto;padding:18px}
+.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 26px rgba(20,48,71,.07)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:#9fb0bd}.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+#start{max-width:620px;margin:55px auto;padding:28px}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);font-size:14px;margin-top:4px}
+label{font-size:14px;font-weight:700}.input{width:100%;margin-top:7px;padding:13px;border:1px solid #cbd5df;border-radius:12px;background:#fff}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.stats{display:flex;gap:7px;flex-wrap:wrap}.pill{padding:7px 10px;border-radius:999px;background:#eef3f6;font-size:12px;font-weight:700}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.8fr);gap:15px;margin-top:15px}
+.map-panel{padding:14px;overflow:hidden}.map-title{font-size:16px;font-weight:800}.hint{font-size:12px;color:var(--muted);margin:3px 0 10px}
+.map-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}.map{display:block;width:100%;min-width:720px;height:auto}
+.side{padding:16px}.tag{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:var(--blue2);color:#075a78}
+.question{font-size:17px;font-weight:800;line-height:1.35;margin:11px 0}.choices{display:grid;gap:8px}.choice{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px;text-align:left;cursor:pointer}.choice:hover{border-color:#9fb0bd}.choice:disabled{cursor:default}.choice.ok{background:var(--green2);border-color:var(--green)}.choice.no{background:var(--red2);border-color:var(--red)}
+.feedback{min-height:38px;margin-top:10px;font-size:13px;font-weight:700}.small{font-size:11px;color:var(--muted)}
+.deck{display:grid;gap:7px;max-height:390px;overflow:auto;margin-top:8px}.card{padding:10px;border:1px dashed #b8c3cc;border-radius:12px;background:#fff;cursor:pointer;text-align:left}.card strong{display:block}.card span{font-size:11px;color:var(--muted)}.card[disabled]{opacity:.45;cursor:default}
+.target-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.target{border:1px dashed #b8c3cc;border-radius:10px;padding:9px;background:#fff;cursor:pointer;font-size:12px;font-weight:700}.target:hover{background:#f7f9fa}
+.end{max-width:720px;margin:45px auto;padding:28px;text-align:center}.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:18px 0}.result{padding:14px;border-radius:13px;background:#f4f7f8}.result b{display:block;font-size:22px;margin-top:4px}.bar{height:9px;background:#e8edf0;border-radius:99px;overflow:hidden;margin-top:8px}.bar>div{height:100%;background:var(--blue);width:0}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.side{order:-1}.resultgrid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section id="start" class="panel">
+<div class="title">🧬 Carrera de la Glucólisis</div>
+<div class="sub">Construye la vía, responde y corre hasta los dos piruvatos.</div>
+<div style="margin-top:20px"><label for="name">Nombre del alumno</label><input id="name" class="input" maxlength="60" autocomplete="name" placeholder="Escribe tu nombre"></div>
+<div id="nameError" class="hidden" style="color:var(--red);font-size:12px;margin-top:7px">Escribe tu nombre para comenzar.</div>
+<button id="startBtn" class="btn primary" style="width:100%;margin-top:13px">▶ Iniciar carrera</button>
+<div style="margin-top:13px;font-size:12px;color:var(--muted)">16 retos principales · bonos por colocar moléculas/enzimas · cronómetro individual</div>
+</section>
+
+<section id="game" class="hidden">
+<div class="top">
+<div><div style="font-size:22px;font-weight:800">CARRERA DE LA GLUCÓLISIS</div><div class="sub" id="student"></div></div>
+<div class="stats">
+<div class="pill">⏱ <span id="time">00:00</span></div>
+<div class="pill">Perlas <span id="pearls">0</span>/18</div>
+<div class="pill">✓ <span id="correct">0</span>/16</div>
+<div class="pill">⚡ ATP neto <span id="atp">0</span></div>
+<div class="pill">NADH <span id="nadh">0</span></div>
+</div>
+</div>
+
+<div class="layout">
+<div class="panel map-panel">
+<div class="map-title">COLLAR DE PERLAS · MAPA DE LA VÍA</div>
+<div class="hint">La bifurcación ocurre en <b>RUPTURA</b>: desde ahí las dos rutas permanecen separadas hasta PIRUVATO 1 y PIRUVATO 2.</div>
+<div class="map-wrap">
+<svg id="map" class="map" viewBox="0 0 1800 1100" aria-label="Mapa de glucólisis en forma de Y">
+<defs>
+<filter id="shadow"><feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity=".16"/></filter>
+</defs>
+<!-- threads -->
+<g fill="none" stroke="#b8c3cc" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+<path d="M900 190 L900 385"/>
+<path d="M900 445 C800 485 520 520 420 615 C380 655 360 735 360 935"/>
+<path d="M900 445 C1000 485 1280 520 1380 615 C1420 655 1440 735 1440 935"/>
+</g>
+<text x="900" y="130" text-anchor="middle" font-size="18" font-weight="800" fill="#60758a">FASE DE INVERSIÓN · −2 ATP</text>
+<text x="900" y="495" text-anchor="middle" font-size="18" font-weight="800" fill="#60758a">RUPTURA · 6 C → 2 × 3 C</text>
+<text x="900" y="1065" text-anchor="middle" font-size="20" font-weight="800" fill="#b07800">🏁 META · 2 PIRUVATOS</text>
+<g id="nodes"></g>
+<g id="labels"></g>
+<g id="playerToken"></g>
+</svg>
+<div class="bar"><div id="progressBar"></div></div>
+<div class="small" style="margin-top:5px">El marcador avanza una perla por cada respuesta correcta. Los bonos pueden llevarte hasta las dos últimas perlas.</div>
+</div>
+
+<aside class="panel side">
+<div id="taskTitle" class="tag">PREGUNTA</div>
+<div id="question" class="question"></div>
+<div id="choices" class="choices"></div>
+<div id="feedback" class="feedback" aria-live="polite"></div>
+<div id="bonus" class="small"></div>
+<button id="nextBtn" class="btn primary hidden" style="width:100%;margin-top:8px">Continuar →</button>
+
+<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+<div style="font-weight:800">🧬 Cartas de construcción</div>
+<div class="small">Son opcionales: una colocación correcta da <b>+1 perla de bono</b>.</div>
+<div id="deck" class="deck"></div>
+<div id="targets" class="target-grid hidden"></div>
+<div id="canvaBox" style="margin-top:12px">
+<button id="canvaBtn" class="btn" style="width:100%">🎨 Descargar plantilla para Canva</button>
+</div>
+</aside>
+</div>
+</section>
+
+<section id="end" class="panel end hidden">
+<div style="font-size:48px">🏁</div>
+<div class="title" style="font-size:26px">¡Carrera completada!</div>
+<p id="finalLine" style="color:var(--muted)"></p>
+<div class="resultgrid">
+<div class="result">Tiempo<b id="finalTime">00:00</b></div>
+<div class="result">Aciertos<b id="finalCorrect">16/16</b></div>
+<div class="result">Perlas<b id="finalPearls">18/18</b></div>
+<div class="result">Bonos<b id="finalBonus">0</b></div>
+<div class="result">ATP netos<b>2</b></div>
+<div class="result">NADH<b>2</b></div>
+</div>
+<p><b>Balance:</b> 2 ATP invertidos → 4 ATP producidos → 2 ATP netos + 2 NADH + 2 piruvatos.</p>
+<button id="restart" class="btn primary">Jugar otra vez</button>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var qs=[
+["🗺️ Ubicación","¿En qué lugar de la célula ocurre la glucólisis?",["En la mitocondria","En el citosol","En el núcleo"],1],
+["⚡ Visión general","¿La glucólisis necesita oxígeno directo para poder realizarse?",["Sí, es 100% aeróbica","No, no requiere oxígeno directo"],1],
+["🥖 Reactante","¿Cuál es el combustible principal con el que inicia la glucólisis y cuántos carbonos tiene?",["Glucosa (6 carbonos)","Piruvato (3 carbonos)","Ácido cítrico (6 carbonos)"],0],
+["💸 Inversión","En la fase de inversión, ¿qué hace la célula con la energía?",["Gana 2 ATP","Gasta/invierte 2 ATP","No usa ATP"],1],
+["🔒 Hexocinasa","¿Para qué sirve fosforilar la glucosa en el paso 1?",["Para destruirla","Para ayudar a atraparla dentro de la célula"],1],
+["✂️ Aldolasa","¿Qué hace la aldolasa?",["Rompe un compuesto de 6 C en dos triosas","Le quita todos sus oxígenos"],0],
+["🔋 NAD+","¿Cuál es la función principal de NAD+ durante la glucólisis?",["Romper la molécula","Aceptar electrones y convertirse en NADH"],1],
+["🔄 Triosas","¿Cuál de las dos triosas puede continuar directamente y cuál debe convertirse?",["G3P continúa; DHAP debe convertirse","DHAP continúa; G3P debe convertirse"],0],
+["💰 ATP bruto","¿Cuánto ATP se produce en total durante la fase de ganancia?",["2 ATP","4 ATP","36 ATP"],1],
+["🧮 ATP neto","Si se gastan 2 ATP y se producen 4 ATP, ¿cuál es la ganancia neta?",["4 ATP","2 ATP","0 ATP"],1],
+["🏁 Productos","¿Cuáles son los productos finales de la glucólisis completa?",["2 piruvatos + 2 ATP netos + 2 NADH","CO₂ y agua","1 ácido láctico"],0],
+["🚪 Piruvato","Con oxígeno disponible y condiciones adecuadas para continuar el metabolismo aeróbico, el piruvato puede...",["Continuar su oxidación mediante rutas mitocondriales","Salir inmediatamente de la célula"],0],
+["🧩 G6P","Coloca la tarjeta G6P en la estación correcta.",["Después de glucosa","En la bifurcación","Junto a piruvato"],0],
+["🧩 Aldolasa","Coloca la tarjeta ALDOLASA en la estación correcta.",["Meta","Punto de ruptura","Primer ATP"],1],
+["🧪 G3P","Coloca la tarjeta G3P en la estación correcta.",["Antes de glucosa","Después de la ruptura, en una de las ramas","Fuera del tablero"],1],
+["🏁 2 piruvatos","¿Cuántos piruvatos se forman a partir de una glucosa?",["1","2","4"],1]
+];
+
+var cards=[
+["G6P","Molécula","Estación después de glucosa",[1]],
+["F-1,6-BP","Molécula","Antes de la ruptura",[3]],
+["DHAP","Molécula","Rama izquierda después de ruptura",[5]],
+["G3P","Molécula","Rama derecha después de ruptura",[6,12]],
+["1,3-BPG","Molécula","Después de G3P",[7,13]],
+["3-PG","Molécula","Después de 1,3-BPG",[8,14]],
+["2-PG","Molécula","Después de 3-PG",[9,15]],
+["PEP","Molécula","Después de 2-PG",[10,16]],
+["Piruvato","Molécula","Final de cada rama",[11,17]],
+["Hexocinasa","Enzima","Glucosa → G6P",[1]],
+["PFK","Enzima","F6P → F-1,6-BP",[2]],
+["Aldolasa","Enzima","Ruptura",[4]],
+["GAPDH","Enzima","G3P → 1,3-BPG",[7,13]],
+["Fosfoglicerato cinasa","Enzima","1,3-BPG → 3-PG",[8,14]],
+["Piruvato cinasa","Enzima","PEP → piruvato",[10,16]]
+];
+
+var state={name:"",q:0,correct:0,pearls:0,bonus:0,atp:-0,nadh:0,start:0,timer:null,selectedCard:null,doneCards:{}};
+var pearlNodes=[
+["GLUCOSA","6 C",900,190],["G6P","Glucosa-6-P",900,255],["F6P","Fructosa-6-P",900,320],["F-1,6-BP","6 C · 2 P",900,385],
+["DHAP","3 C",705,535],["G3P","3 C",590,620],["1,3-BPG","3 C",500,710],["3-PG","3 C",430,800],["2-PG","3 C",385,890],["PEP","3 C",360,980],["PIRUVATO 1","3 C",250,1045],
+["G3P","3 C",1095,535],["1,3-BPG","3 C",1210,620],["3-PG","3 C",1300,710],["2-PG","3 C",1370,800],["PEP","3 C",1415,890],["PIRUVATO 2","3 C",1440,980],["RUPTURA","6 C → 2×3 C",900,445]
+];
+
+function $(id){return document.getElementById(id)}
+function fmt(sec){var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")}
+function now(){return Math.floor((Date.now()-state.start)/1000)}
+function stats(){$("pearls").textContent=state.pearls;$("correct").textContent=state.correct;$("atp").textContent=Math.max(0,state.atp);$("nadh").textContent=state.nadh;$("progressBar").style.width=Math.min(100,state.pearls/18*100)+"%"}
+function addPearl(){state.pearls=Math.min(18,state.pearls+1);draw()}
+function draw(){
+var g=$("nodes");g.innerHTML="";
+pearlNodes.forEach(function(n,i){
+if(i===17){
+var rr=document.createElementNS("http://www.w3.org/2000/svg","circle");rr.setAttribute("cx",n[2]);rr.setAttribute("cy",n[3]);rr.setAttribute("r",18);rr.setAttribute("fill","#d89b17");g.appendChild(rr);
+return;
+}
+var circle=document.createElementNS("http://www.w3.org/2000/svg","g");
+var done=i<state.pearls, current=i===state.pearls;
+var c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+c.setAttribute("cx",n[2]);c.setAttribute("cy",n[3]);c.setAttribute("r",i>=10?52:45);
+c.setAttribute("fill",done?(i>=10?"#fff0c2":"#e7f5ef"):(current?"#eaf4f8":"#f7f8fa"));
+c.setAttribute("stroke",done?(i>=10?"#d89b17":"#168b68"):(current?"#147ea8":"#aeb9c4"));
+c.setAttribute("stroke-width",current?6:4);c.setAttribute("filter","url(#shadow)");circle.appendChild(c);
+var t=document.createElementNS("http://www.w3.org/2000/svg","text");t.setAttribute("x",n[2]);t.setAttribute("y",n[3]-3);t.setAttribute("text-anchor","middle");t.setAttribute("font-size",i>=10?"13":"14");t.setAttribute("font-weight","800");t.setAttribute("fill","#163047");t.textContent=n[0];circle.appendChild(t);
+var s=document.createElementNS("http://www.w3.org/2000/svg","text");s.setAttribute("x",n[2]);s.setAttribute("y",n[3]+18);s.setAttribute("text-anchor","middle");s.setAttribute("font-size","11");s.setAttribute("fill","#60758a");s.textContent=n[1];circle.appendChild(s);
+g.appendChild(circle);
+});
+var tok=$("playerToken");tok.innerHTML="";
+var idx=Math.min(state.pearls,16);var n=pearlNodes[idx];var tc=document.createElementNS("http://www.w3.org/2000/svg","circle");tc.setAttribute("cx",n[2]);tc.setAttribute("cy",n[3]-62);tc.setAttribute("r",12);tc.setAttribute("fill","#147ea8");tc.setAttribute("stroke","#fff");tc.setAttribute("stroke-width","3");tok.appendChild(tc);
+var tt=document.createElementNS("http://www.w3.org/2000/svg","text");tt.setAttribute("x",n[2]);tt.setAttribute("y",n[3]-58);tt.setAttribute("text-anchor","middle");tt.setAttribute("font-size","9");tt.setAttribute("font-weight","800");tt.setAttribute("fill","#fff");tt.textContent="TÚ";tok.appendChild(tt);
+stats()
+}
+function renderQ(){
+$("taskTitle").textContent=qs[state.q][0];
+$("question").textContent=qs[state.q][1];
+$("feedback").textContent="";$("bonus").textContent="";$("nextBtn").classList.add("hidden");
+var box=$("choices");box.innerHTML="";
+qs[state.q][2].forEach(function(opt,i){var b=document.createElement("button");b.type="button";b.className="choice";b.textContent=String.fromCharCode(65+i)+") "+opt;b.addEventListener("click",function(){answerQ(i,b)});box.appendChild(b)})
+}
+function answerQ(i,b){
+var bs=[].slice.call(document.querySelectorAll(".choice"));bs.forEach(function(x){x.disabled=true});
+var ok=i===qs[state.q][3];
+if(ok){b.classList.add("ok");state.correct++;addPearl();$("feedback").textContent="✓ Correcto · +1 perla.";if(state.q===3)state.atp=0;if(state.q===6)state.nadh=1;if(state.q===8)state.atp=4;if(state.q===10||state.q===15)state.nadh=2}
+else{b.classList.add("no");bs[qs[state.q][3]].classList.add("ok");$("feedback").textContent="✗ Incorrecto · la respuesta correcta queda marcada."; }
+stats();$("nextBtn").classList.remove("hidden");$("nextBtn").onclick=function(){state.q++;if(state.q<qs.length){renderQ()}else{finishIfReady()}}
+}
+function renderCards(){
+var deck=$("deck");deck.innerHTML="";
+cards.forEach(function(c,i){
+var b=document.createElement("button");b.type="button";b.className="card";b.disabled=!!state.doneCards[i];
+b.innerHTML="<strong>"+c[0]+" · "+c[1]+"</strong><span>"+c[2]+" · +1 perla</span>";
+b.addEventListener("click",function(){selectCard(i)});deck.appendChild(b)
+})
+}
+function selectCard(i){
+state.selectedCard=i;$("targets").classList.remove("hidden");$("targets").innerHTML="";
+$("feedback").textContent="Coloca "+cards[i][0]+" en la estación correcta.";
+var targetLabels=[
+["1","Glucosa → G6P"],["2","G6P → F6P"],["3","F6P → F-1,6-BP"],["4","Ruptura"],["5","DHAP"],["6","G3P izquierda"],["7","1,3-BPG izquierda"],["8","3-PG izquierda"],["9","2-PG izquierda"],["10","PEP izquierda"],["11","Piruvato 1"],["12","G3P derecha"],["13","1,3-BPG derecha"],["14","3-PG derecha"],["15","2-PG derecha"],["16","PEP derecha"],["17","Piruvato 2"]
+];
+targetLabels.forEach(function(t){var b=document.createElement("button");b.type="button";b.className="target";b.textContent=t[1];b.addEventListener("click",function(){placeCard(i,Number(t[0]))});$("targets").appendChild(b)})
+}
+function placeCard(i,pos){
+var c=cards[i],ok=c[3].indexOf(pos)>=0;
+if(ok){state.doneCards[i]=true;state.bonus++;addPearl();$("feedback").textContent="🧬 ¡Bien colocado! +1 perla de bono.";renderCards();$("targets").classList.add("hidden");state.selectedCard=null}
+else{$("feedback").textContent="No es esa estación. Inténtalo con la misma tarjeta."}
+}
+function finishIfReady(){
+if(state.pearls>=18 || state.correct===16){finish();return}
+$("question").textContent="Terminaste las 16 tarjetas principales. Usa cartas de construcción para ganar las perlas de bono y llegar a la meta.";
+$("choices").innerHTML="";$("nextBtn").classList.add("hidden");
+$("taskTitle").textContent="FASE BONUS";
+}
+function finish(){
+clearInterval(state.timer);var sec=now();$("game").classList.add("hidden");$("end").classList.remove("hidden");
+$("finalLine").textContent="Jugador: "+state.name;
+$("finalTime").textContent=fmt(sec);$("finalCorrect").textContent=state.correct+"/16";$("finalPearls").textContent=state.pearls+"/18";$("finalBonus").textContent=state.bonus
+}
+function downloadCanva(){
+var svgText=String.raw`<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1100" viewBox="0 0 1800 1100">
+<rect width="1800" height="1100" fill="#fbfaf6"/>
+<text x="900" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-size="42" font-weight="700" fill="#163047">CARRERA DE LA GLUCÓLISIS</text>
+<text x="900" y="98" text-anchor="middle" font-family="Arial,sans-serif" font-size="19" fill="#60758a">Collar de perlas metabólico · 1 glucosa → 2 piruvatos</text>
+
+<!-- phase labels -->
+<text x="900" y="140" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#60758a">FASE DE INVERSIÓN · −2 ATP</text>
+<text x="900" y="485" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#60758a">RUPTURA · 1 molécula de 6 C → 2 rutas de 3 C</text>
+<text x="900" y="1015" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#60758a">FASE DE GANANCIA · +4 ATP · +2 NADH</text>
+
+<!-- necklace threads -->
+<g fill="none" stroke="#b8c3cc" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M900 190 L900 390"/>
+  <path d="M900 390 C800 430 520 465 420 560 C380 600 360 680 360 880"/>
+  <path d="M900 390 C1000 430 1280 465 1380 560 C1420 600 1440 680 1440 880"/>
+</g>
+
+<!-- pearls -->
+<g font-family="Arial,sans-serif" text-anchor="middle">
+  <!-- trunk -->
+  <g transform="translate(900,190)"><circle r="45" fill="#eef5f7" stroke="#6f8795" stroke-width="4"/><text y="-4" font-size="18" font-weight="800" fill="#163047">GLUCOSA</text><text y="18" font-size="13" fill="#60758a">6 C</text></g>
+  <g transform="translate(900,255)"><circle r="45" fill="#f5f7f8" stroke="#aeb9c4" stroke-width="4"/><text y="-4" font-size="17" font-weight="800" fill="#163047">G6P</text><text y="18" font-size="12" fill="#60758a">Glucosa-6-P</text></g>
+  <g transform="translate(900,320)"><circle r="45" fill="#f5f7f8" stroke="#aeb9c4" stroke-width="4"/><text y="-4" font-size="17" font-weight="800" fill="#163047">F6P</text><text y="18" font-size="12" fill="#60758a">Fructosa-6-P</text></g>
+  <g transform="translate(900,385)"><circle r="49" fill="#fff6df" stroke="#d89b17" stroke-width="4"/><text y="-5" font-size="16" font-weight="800" fill="#163047">F-1,6-BP</text><text y="18" font-size="12" fill="#60758a">6 C · 2 fosfatos</text></g>
+
+  <!-- rupture junction -->
+  <circle cx="900" cy="445" r="18" fill="#d89b17"/>
+  <text x="900" y="456" font-family="Arial,sans-serif" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">R</text>
+  <text x="900" y="478" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="800" fill="#b07800">RUPTURA</text>
+
+  <!-- left branch -->
+  <g transform="translate(705,535)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="17" font-weight="800" fill="#163047">DHAP</text><text y="18" font-size="12" fill="#60758a">3 C</text></g>
+  <g transform="translate(590,620)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="17" font-weight="800" fill="#163047">G3P</text><text y="18" font-size="12" fill="#60758a">3 C</text></g>
+  <g transform="translate(500,710)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="15" font-weight="800" fill="#163047">1,3-BPG</text><text y="18" font-size="12" fill="#60758a">oxidación</text></g>
+  <g transform="translate(430,800)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">3-PG</text><text y="18" font-size="12" fill="#60758a">+ ATP</text></g>
+  <g transform="translate(385,890)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">2-PG</text><text y="18" font-size="12" fill="#60758a">isomerización</text></g>
+  <g transform="translate(360,980)"><circle r="45" fill="#f1f7f4" stroke="#8cae9d" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">PEP</text><text y="18" font-size="12" fill="#60758a">alta energía</text></g>
+  <g transform="translate(250,1045)"><circle r="52" fill="#fff8df" stroke="#d89b17" stroke-width="5"/><text y="-4" font-size="15" font-weight="800" fill="#163047">PIRUVATO</text><text y="19" font-size="14" font-weight="800" fill="#b07800">1 · 3 C</text></g>
+
+  <!-- right branch -->
+  <g transform="translate(1095,535)"><circle r="45" fill="#edf5fb" stroke="#7ea7c2" stroke-width="4"/><text y="-4" font-size="17" font-weight="800" fill="#163047">G3P</text><text y="18" font-size="12" fill="#60758a">3 C</text></g>
+  <g transform="translate(1210,620)"><circle r="45" fill="#edf5fb" stroke="#7ea7c2" stroke-width="4"/><text y="-4" font-size="15" font-weight="800" fill="#163047">1,3-BPG</text><text y="18" font-size="12" fill="#60758a">oxidación</text></g>
+  <g transform="translate(1300,710)"><circle r="45" fill="#edf5fb" stroke="#7ea7c2" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">3-PG</text><text y="18" font-size="12" fill="#60758a">+ ATP</text></g>
+  <g transform="translate(1370,800)"><circle r="45" fill="#edf5fb" stroke="#7ea7c2" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">2-PG</text><text y="18" font-size="12" fill="#60758a">isomerización</text></g>
+  <g transform="translate(1415,890)"><circle r="45" fill="#edf5fb" stroke="#7ea7c2" stroke-width="4"/><text y="-4" font-size="16" font-weight="800" fill="#163047">PEP</text><text y="18" font-size="12" fill="#60758a">alta energía</text></g>
+  <g transform="translate(1440,980)"><circle r="52" fill="#fff8df" stroke="#d89b17" stroke-width="5"/><text y="-4" font-size="15" font-weight="800" fill="#163047">PIRUVATO</text><text y="19" font-size="14" font-weight="800" fill="#b07800">2 · 3 C</text></g>
+</g>
+
+<!-- enzyme placeholders -->
+<g font-family="Arial,sans-serif" font-size="13" fill="#60758a">
+ <text x="965" y="225">＋ HEXOCINASA</text>
+ <text x="965" y="292">＋ PFK</text>
+ <text x="940" y="430">＋ ALDOLASA</text>
+ <text x="660" y="595">＋ GAPDH</text>
+ <text x="1280" y="670">＋ PFK/PK</text>
+ <text x="500" y="855">＋ ENZIMA</text>
+</g>
+
+<!-- energy panel -->
+<rect x="90" y="130" rx="16" ry="16" width="320" height="120" fill="#ffffff" stroke="#dce4e9"/>
+<text x="115" y="160" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#163047">BANCO DE ENERGÍA</text>
+<text x="115" y="190" font-family="Arial,sans-serif" font-size="14" fill="#60758a">ATP inicial: 2</text>
+<text x="115" y="213" font-family="Arial,sans-serif" font-size="14" fill="#60758a">ATP producido: 4</text>
+<text x="250" y="190" font-family="Arial,sans-serif" font-size="14" fill="#60758a">NADH: 2</text>
+<text x="250" y="213" font-family="Arial,sans-serif" font-size="14" fill="#60758a">ATP neto: 2</text>
+
+<!-- meta -->
+<text x="900" y="1070" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="800" fill="#b07800">🏁 META · 2 PIRUVATOS</text>
+</svg>`;
+var blob=new Blob([svgText],{type:"image/svg+xml;charset=utf-8"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="plantilla_canva_carrera_glucolisis.svg";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},500)
+}
+$("startBtn").addEventListener("click",function(){
+var n=$("name").value.trim();if(!n){$("nameError").classList.remove("hidden");$("name").focus();return}
+$("nameError").classList.add("hidden");state.name=n;state.start=Date.now();$("student").textContent="Jugador: "+n;
+$("start").classList.add("hidden");$("game").classList.remove("hidden");state.timer=setInterval(function(){$("time").textContent=fmt(now())},250);
+draw();renderQ();renderCards();stats()
+});
+$("name").addEventListener("keydown",function(e){if(e.key==="Enter")$("startBtn").click()});
+$("canvaBtn").addEventListener("click",downloadCanva);
+$("restart").addEventListener("click",function(){location.reload()});
+})();
+</script>
+</body>
+</html>
