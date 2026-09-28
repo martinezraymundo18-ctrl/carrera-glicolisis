@@ -3,128 +3,489 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Carrera de la Glucólisis</title>
+<title>Carrera de la Glucólisis — Edición Travesía RPG</title>
 <style>
-:root{--bg:#fbfaf6;--ink:#163047;--muted:#60758a;--line:#d9e2e8;--blue:#147ea8;--blue2:#eaf4f8;--green:#168b68;--green2:#e9f7f1;--gold:#c78b12;--gold2:#fff6dc;--red:#b54a4a;--red2:#fdeeee;--card:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}button,input{font:inherit}.hidden{display:none!important}.wrap{max-width:1200px;margin:auto;padding:18px}.panel{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px rgba(20,48,71,.08)}
-#start{max-width:620px;margin:55px auto;padding:28px}.title{font-size:28px;font-weight:800}.sub{color:var(--muted);font-size:14px;margin-top:5px}.label{font-size:14px;font-weight:800;display:block;margin-top:20px}.input{width:100%;margin-top:7px;padding:13px;border:1px solid #cbd5df;border-radius:12px;background:#fff}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:11px 15px;cursor:pointer;font-weight:800}.primary{background:var(--blue);border-color:var(--blue);color:#fff}.full{width:100%;margin-top:12px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.stats{display:flex;gap:7px;flex-wrap:wrap}.pill{padding:7px 10px;border-radius:999px;background:#eef3f6;font-size:12px;font-weight:800}.layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.8fr);gap:15px;margin-top:15px}.map-panel{padding:14px;overflow:hidden}.map-title{font-size:17px;font-weight:800}.hint{font-size:12px;color:var(--muted);margin:3px 0 10px}.map-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}.map{display:block;min-width:760px;width:100%;height:auto}.side{padding:16px}.tag{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:var(--blue2);color:#075a78}.question{font-size:17px;font-weight:800;line-height:1.35;margin:11px 0}.choices{display:grid;gap:8px}.choice{border:1px solid var(--line);border-radius:11px;background:#fff;padding:11px;text-align:left;cursor:pointer}.choice:disabled{cursor:default}.choice.ok{background:var(--green2);border-color:var(--green)}.choice.no{background:var(--red2);border-color:var(--red)}.feedback{min-height:38px;margin-top:10px;font-size:13px;font-weight:800}.deck{display:grid;gap:7px;max-height:360px;overflow:auto;margin-top:8px}.card{padding:10px;border:1px dashed #b8c3cc;border-radius:12px;background:#fff;cursor:pointer;text-align:left}.card strong{display:block}.card span{font-size:11px;color:var(--muted)}.card:disabled{opacity:.45}.target-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.target{border:1px dashed #b8c3cc;border-radius:10px;padding:9px;background:#fff;cursor:pointer;font-size:12px;font-weight:800}.progress{height:8px;background:#e9eef2;border-radius:99px;overflow:hidden;margin-top:12px}.progress>div{height:100%;background:var(--blue);width:0}.final{max-width:720px;margin:45px auto;padding:28px;text-align:center}.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:20px 0}.result{padding:13px;background:#f4f7f8;border-radius:13px}.result b{display:block;font-size:22px;margin-top:3px}.small{font-size:11px;color:var(--muted)}
-@media(max-width:860px){.layout{grid-template-columns:1fr}.side{order:-1}.result-grid{grid-template-columns:1fr 1fr}}
+:root{--ink:#183247;--muted:#60758a;--line:#c9d4dc;--accent:#147ea8;--gain:#168b68;--gold:#d49a18;--bg:#eef2f5;--card:#fff;--bad:#b44b4b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+.wrap{max-width:1300px;margin:auto;padding:12px}
+button,input{font:inherit}
+.panel{background:#fff;border:1px solid #dbe2e8;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(30,50,70,.08)}
+
+/* PANTALLA INICIO */
+#start{max-width:620px;margin:60px auto;text-align:center}
+#start h1{margin-top:0;color:var(--accent);font-size:28px}
+.field{display:flex;gap:8px;margin-top:20px}
+.field input{flex:1;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:16px}
+.primary{border:0;border-radius:12px;padding:12px 20px;background:var(--accent);color:#fff;font-weight:800;cursor:pointer;transition:transform 0.1s, background 0.2s}
+.primary:hover{background:#0f6385;transform:scale(1.02)}
+.secondary{border:1px solid #cbd5e1;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+.sub{color:var(--muted);font-size:14px;line-height:1.4}
+.note{font-size:12px;color:var(--muted);line-height:1.45;margin-top:15px}
+
+/* JUEGO PRINCIPAL */
+.game{display:none}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff;padding:12px 20px;border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.05);margin-bottom:12px;position:sticky;top:8px;z-index:10}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:#f1f5f7;border-radius:11px;padding:8px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.stat b{font-size:18px;color:var(--accent)}
+
+/* MAPA CENTRAL */
+.board{position:relative;background:#fff;border-radius:18px;padding:15px;text-align:center}
+.mapwrap{overflow:auto;background:radial-gradient(circle, #fbfcfd 0%, #eef3f7 100%);border-radius:14px;padding:10px;border:1px solid #e1e8ed}
+.map{display:block;margin:auto;max-width:100%;height:auto;min-width:700px}
+
+/* ELEMENTOS SVG */
+.thread{fill:none;stroke:#c5cfd6;stroke-width:8;stroke-linecap:round}
+.core{fill:none;stroke:#6da8bc;stroke-width:3;stroke-dasharray:8 8;stroke-linecap:round}
+.pearl{fill:#f8fafb;stroke:#aebbc5;stroke-width:3;transition:all 0.3s}
+.done .pearl{fill:#dff4ea;stroke:var(--gain)}
+.current .pearl{fill:#e3f1f7;stroke:var(--accent);stroke-width:6;animation:pulse 1.8s infinite}
+.meta .pearl{fill:#fff8df;stroke:var(--gold);stroke-width:5}
+@keyframes pulse{0%{r:27}50%{r:32}100%{r:27}}
+
+.node{cursor:pointer}
+.node text{font-weight:800;fill:var(--ink);text-anchor:middle;dominant-baseline:middle;font-size:12px;pointer-events:none}
+.node .small{font-size:9px;font-weight:700;fill:var(--muted)}
+.phase{font-size:12px;font-weight:800;letter-spacing:.5px;fill:var(--muted)}
+.enzyme{font-size:10px;font-weight:700;fill:#5d7180}
+.token{fill:var(--accent);stroke:#fff;stroke-width:3;transition:all 0.5s ease-in-out}
+.tokenText{fill:#fff;font-size:10px;font-weight:900;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
+
+.legend{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:12px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid #aaa;vertical-align:-1px;margin-right:4px}
+.progress{height:10px;background:#e8edf0;border-radius:99px;overflow:hidden;margin-top:10px}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width 0.4s}
+
+/* BARRA DE TARJETAS INFERIOR */
+.cards-bar{margin-top:15px;background:#fff;border-radius:16px;padding:15px;box-shadow:0 4px 15px rgba(0,0,0,0.05)}
+.cards-bar h3{margin:0 0 8px 0;font-size:15px;display:flex;align-items:center;gap:6px}
+.cards{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px}
+.cardBtn{min-width:180px;border:1px dashed #aebbc5;background:#f9fbfd;border-radius:11px;padding:10px;text-align:left;cursor:pointer;flex-shrink:0;transition:all 0.2s}
+.cardBtn:hover:not(:disabled){border-color:var(--accent);background:#f0f7fa}
+.cardBtn:disabled{opacity:.4;cursor:default}
+.cardBtn strong{display:block;font-size:13px;color:var(--ink)}
+.cardBtn span{font-size:10px;color:var(--muted)}
+.selected{border:2px solid var(--accent)!important;background:#eef8fb!important;box-shadow:0 0 8px rgba(20,126,168,0.3)}
+
+/* VENTANA EMERGENTE / MODAL DE DIÁLOGO */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(20,35,50,0.6);backdrop-filter:blur(3px);display:none;justify-content:center;align-items:center;z-index:100;animation:fadeIn 0.2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{background:#fff;border-radius:20px;padding:24px;width:90%;max-width:540px;box-shadow:0 12px 35px rgba(0,0,0,0.25);position:relative;border:2px solid var(--accent);animation:slideUp 0.3s}
+@keyframes slideUp{from{transform:translateY(20px)}to{transform:translateY(0)}}
+.dialogue-avatar{display:flex;align-items:center;gap:12px;margin-bottom:15px;border-bottom:1px solid #edf2f7;padding-bottom:10px}
+.avatar-icon{width:45px;height:45px;background:#e3f1f7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid var(--accent)}
+.dialogue-title{font-weight:800;color:var(--accent);font-size:14px;text-transform:uppercase;letter-spacing:0.5px}
+.q{font-size:17px;font-weight:800;line-height:1.4;margin:10px 0 16px;color:var(--ink)}
+.choices{display:grid;gap:10px}
+.choice{border:1px solid #d6dee4;background:#f8fafc;border-radius:12px;padding:12px 15px;text-align:left;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.15s}
+.choice:hover:not(:disabled){background:#edf4f8;border-color:var(--accent)}
+.choice:disabled{cursor:default}
+.choice.ok{background:#e4f6ed;border-color:var(--gain);color:#0d5942}
+.choice.no{background:#fdeeee;border-color:var(--bad);color:#832525}
+.feedback{min-height:38px;margin-top:12px;font-size:13px;font-weight:700;display:flex;align-items:center}
+.modal-footer{display:flex;justify-content:flex-end;margin-top:15px}
+
+/* PANTALLA FINAL */
+.final{display:none;max-width:760px;margin:45px auto;text-align:center}
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.result{background:#f1f6f7;border-radius:14px;padding:15px}
+.result b{display:block;font-size:26px;color:var(--accent)}
+
+@media(max-width:768px){
+ .results{grid-template-columns:1fr 1fr}
+ .top{flex-direction:column;align-items:flex-start}
+ .field{flex-direction:column}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+<!-- INICIO -->
 <section id="start" class="panel">
-  <div style="font-size:12px;font-weight:800;color:var(--blue)">🧬 BIOQUÍMICA 1 · RETO INDIVIDUAL</div>
-  <div class="title" style="margin-top:8px">Carrera de la Glucólisis</div>
-  <div class="sub">Construye la vía, responde correctamente y llega a los dos piruvatos.</div>
-  <label class="label" for="studentName">Nombre del alumno</label>
-  <input id="studentName" class="input" maxlength="60" placeholder="Escribe tu nombre" autocomplete="off">
-  <div id="nameError" class="hidden" style="color:var(--red);font-size:12px;margin-top:7px">Escribe tu nombre para comenzar.</div>
-  <button id="startBtn" type="button" class="btn primary full">▶ Iniciar carrera</button>
-  <div class="small" style="margin-top:10px">Pregunta correcta: +1 perla · Molécula/enzima bien colocada: +1 perla extra.</div>
+<h1>🧬 Carrera de la Glucólisis</h1>
+<p class="sub">Emprende la travesía metabólica. Responde a los desafíos emergentes en cada estación, coloca las enzimas y moléculas en el mapa central y guía a la glucosa hasta convertirse en dos piruvatos.</p>
+<div class="field">
+  <input id="name" maxlength="60" placeholder="Escribe tu nombre de biomanauta...">
+  <button class="primary" id="startBtn">Comenzar Travesía</button>
+</div>
+<p class="note"><b>Modo de juego:</b> El mapa central guía tu camino con pistas de número de carbonos (C) y nodos clave. Usa tus tarjetas de construcción para descifrar y nombrar cada estación.</p>
 </section>
 
-<section id="game" class="hidden">
-<header class="top">
-  <div><div style="font-size:22px;font-weight:800">CARRERA DE LA GLUCÓLISIS</div><div id="studentLabel" class="sub"></div></div>
-  <div class="stats">
-    <div class="pill">⏱ <span id="timer">00:00</span></div>
-    <div class="pill">Perlas <span id="pearlCount">0</span>/19</div>
-    <div class="pill">✓ <span id="correctCount">0</span>/12</div>
-    <div class="pill">⚡ ATP neto <span id="atpNet">0</span></div>
-    <div class="pill">NADH <span id="nadhCount">0</span></div>
+<!-- JUEGO -->
+<section id="game" class="game">
+<div class="top">
+  <div>
+    <h1 style="margin:0;font-size:20px;color:var(--accent)">CARRERA DE LA GLUCÓLISIS</h1>
+    <div class="sub" id="student" style="font-weight:bold"></div>
   </div>
-</header>
-<div class="layout">
-<section class="panel map-panel">
-  <div class="map-title">🟣 Collar de perlas metabólico</div>
-  <div class="hint">La bifurcación comienza en <b>RUPTURA</b> y las dos ramas llegan a dos piruvatos.</div>
-  <div class="map-wrap"><svg id="map" class="map" viewBox="0 0 760 1120" role="img" aria-label="Glucólisis como collar de perlas en Y desde ruptura hasta dos piruvatos">
-    <defs><filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".18"/></filter></defs>
-    <path d="M380 80 V420 C300 450 210 500 185 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round"/>
-    <path d="M380 420 C460 450 550 500 575 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round"/>
-    <g id="nodes"></g><g id="playerToken"></g>
-    <text x="380" y="35" text-anchor="middle" font-size="15" font-weight="800" fill="#60758a">FASE DE INVERSIÓN · −2 ATP</text>
-    <text x="380" y="470" text-anchor="middle" font-size="14" font-weight="800" fill="#b07800">RUPTURA · 1 × 6 C → 2 × 3 C</text>
-    <text x="380" y="1090" text-anchor="middle" font-size="17" font-weight="800" fill="#b07800">🏁 META · 2 PIRUVATOS</text>
-  </svg></div>
-  <div class="progress"><div id="progressBar"></div></div>
-</section>
-<aside class="panel side">
-  <div class="tag" id="taskType">PREGUNTA</div>
-  <div id="taskTitle" class="small" style="margin-top:7px"></div>
-  <div id="question" class="question"></div>
-  <div id="choices" class="choices"></div>
-  <div id="feedback" class="feedback" aria-live="polite"></div>
-  <button id="nextBtn" type="button" class="btn primary full hidden">Continuar →</button>
-  <hr style="border:0;border-top:1px solid var(--line);margin:15px 0">
-  <div style="font-weight:800;font-size:14px">🧬 Cartas de construcción</div>
-  <div class="small" style="margin-top:3px">Úsalas para ganar perlas extra colocando la molécula o enzima donde corresponde.</div>
-  <div id="deck" class="deck"></div>
-  <div id="targets" class="target-grid hidden"></div>
-  <button id="canvaBtn" type="button" class="btn full">🎨 Descargar plantilla para Canva</button>
-</aside>
+  <div class="stats">
+    <div class="stat">⏱️ <b id="time">00:00</b></div>
+    <div class="stat">🔮 Perlas <b id="pearls">0</b></div>
+    <div class="stat">⚡ ATP neto <b id="atp">0</b></div>
+    <div class="stat">🧪 NADH <b id="nadh">0</b></div>
+  </div>
+</div>
+
+<div class="panel board">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <h2 style="margin:0;font-size:18px">Mapa Central de la Travesía</h2>
+    <span class="sub" style="font-weight:700">Haz clic en la estación marcada con "TÚ" para responder</span>
+  </div>
+
+  <div class="mapwrap">
+    <svg class="map" viewBox="0 0 760 940" aria-label="Mapa de glucólisis">
+      <path class="thread" d="M380 82 V330"/>
+      <path class="core" d="M380 82 V330"/>
+      <path class="thread" d="M380 330 C300 380 210 390 210 455 V820"/>
+      <path class="core" d="M380 330 C300 380 210 390 210 820"/>
+      <path class="thread" d="M380 330 C460 380 550 390 550 455 V820"/>
+      <path class="core" d="M380 330 C460 380 550 390 550 820"/>
+      <text class="phase" x="380" y="35" text-anchor="middle">FASE DE INVERSIÓN · SE INVIERTEN 2 ATP</text>
+      <text class="phase" x="380" y="365" text-anchor="middle">FASE DE GANANCIA · LA RUTA DE 3 C OCURRE 2×</text>
+      <g id="nodes"></g>
+      <g id="enzymes"></g>
+      <g id="token"></g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#f8fafb"></i>Pendiente</span>
+    <span><i class="dot" style="background:#dff4ea;border-color:#168b68"></i>Completada</span>
+    <span><i class="dot" style="background:#e3f1f7;border-color:#147ea8"></i>Estación Actual</span>
+    <span><i class="dot" style="background:#fff8df;border-color:#d49a18"></i>Meta / Pista Clave</span>
+  </div>
+  <div class="progress"><div id="bar"></div></div>
+</div>
+
+<!-- BARRA DE TARJETAS -->
+<div class="cards-bar">
+  <h3>🧬 Tarjetas de Construcción Metabólica <span style="font-size:12px;font-weight:normal;color:var(--muted)">(Selecciona una tarjeta y luego toca la estación correspondiente en el mapa)</span></h3>
+  <div class="cards" id="cards"></div>
+  <button class="primary" id="finishBtn" type="button" style="display:none;margin-top:10px;width:100%">🏁 Finalizar Travesía</button>
 </div>
 </section>
 
-<section id="final" class="panel final hidden">
-  <div style="font-size:38px">🏁</div>
-  <h2 style="font-size:26px;margin:10px 0 0">¡Carrera terminada!</h2>
-  <div id="finalStudent" class="sub"></div>
-  <div class="result-grid">
-    <div class="result"><div class="small">Tiempo</div><b id="finalTime">00:00</b></div>
-    <div class="result"><div class="small">Aciertos</div><b id="finalCorrect">0/12</b></div>
-    <div class="result"><div class="small">Bonos</div><b id="finalBonus">0</b></div>
-    <div class="result"><div class="small">Perlas</div><b id="finalPearls">0/19</b></div>
+<!-- VENTANA EMERGENTE (MODAL) DE PREGUNTAS -->
+<div class="modal-overlay" id="qModal">
+  <div class="modal-box">
+    <div class="dialogue-avatar">
+      <div class="avatar-icon">🧬</div>
+      <div>
+        <div class="dialogue-title" id="qTitle">Desafío Metabólico</div>
+        <div style="font-size:12px;color:var(--muted)">Responde correctamente para avanzar en la ruta</div>
+      </div>
+    </div>
+    <div class="q" id="question"></div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+    <div class="modal-footer">
+      <button class="primary" id="nextQBtn" style="display:none">Continuar Travesía ➔</button>
+    </div>
   </div>
-  <div class="panel" style="padding:15px">2 ATP invertidos → 4 ATP producidos → <b>2 ATP netos</b> + <b>2 NADH</b> + <b>2 piruvatos</b>.</div>
-  <button id="restartBtn" type="button" class="btn primary full">Jugar otra vez</button>
+</div>
+
+<!-- FINAL -->
+<section id="final" class="final panel">
+  <h1>🏁 ¡Travesía Completada!</h1>
+  <p id="finalStudent" style="font-size:18px;font-weight:bold;color:var(--accent)"></p>
+  <div class="results">
+    <div class="result">Tiempo<b id="finalTime">00:00</b></div>
+    <div class="result">Perlas Obtenidas<b id="finalPearls">0</b></div>
+    <div class="result">Aciertos<b id="finalCorrect">0</b></div>
+    <div class="result">Bonos Tarjetas<b id="finalBonus">0</b></div>
+    <div class="result">ATP Neto<b>2</b></div>
+    <div class="result">NADH Producido<b>2</b></div>
+  </div>
+  <p><b>Balance del viaje:</b> 4 ATP producidos − 2 ATP invertidos = <b>2 ATP netos</b> · 2 NADH · 2 Piruvatos.</p>
+  <p class="note">¡Has llevado la glucosa con éxito a través del citosol! Con oxígeno disponible, el viaje continuará hacia la mitocondria.</p>
+  <button class="primary" id="restart" style="margin-top:15px">Jugar de nuevo</button>
 </section>
+
 </div>
 
 <script>
-window.addEventListener('DOMContentLoaded', function(){
-  'use strict';
-  var $=function(id){return document.getElementById(id)};
-  var state={name:'',q:0,correct:0,bonus:0,pearls:0,atpNet:0,nadh:0,start:0,timer:null,selectedCard:null,done:{}};
-  var questions=[
-    ['Ubicación','¿En qué lugar de la célula ocurre la glucólisis?',['En la mitocondria','En el citosol','En el núcleo'],1],
-    ['Visión general','¿La glucólisis necesita oxígeno directo para realizarse?',['Sí, es 100% aeróbica','No, no requiere oxígeno directo'],1],
-    ['Reactante','¿Cuál es el combustible principal con el que inicia y cuántos carbonos tiene?',['Glucosa (6 carbonos)','Piruvato (3 carbonos)','Lactato (3 carbonos)'],0],
-    ['Inversión','¿Qué ocurre con el ATP al inicio?',['Se producen 4 ATP','Se invierten 2 ATP','No se usa ATP'],1],
-    ['Hexocinasa','¿Para qué sirve fosforilar la glucosa?',['Para ayudar a atraparla en la célula','Para convertirla directamente en piruvato','Para eliminarla'],0],
-    ['Aldolasa','¿Qué hace la aldolasa?',['Rompe un compuesto de 6 C en triosas','Produce oxígeno','Consume NADH'],0],
-    ['NAD+','¿Qué hace NAD+ durante la glucólisis?',['Acepta electrones y se convierte en NADH','Se convierte en ATP','Rompe la glucosa'],0],
-    ['Triosas','¿Cuál continúa directamente y cuál debe convertirse?',['G3P continúa; DHAP debe convertirse','DHAP continúa; G3P debe convertirse'],0],
-    ['ATP bruto','¿Cuánto ATP se produce en bruto durante la fase de ganancia?',['2 ATP','4 ATP','36 ATP'],1],
-    ['ATP neto','Si se gastan 2 ATP y se producen 4 ATP, ¿cuál es la ganancia neta?',['4 ATP','2 ATP','0 ATP'],1],
-    ['Productos','¿Cuáles son los productos finales de la glucólisis?',['2 piruvatos + 2 ATP netos + 2 NADH','CO₂ y agua','1 lactato'],0],
-    ['Piruvato','¿Cuántos piruvatos se forman a partir de una glucosa?',['1','2','4'],1]
-  ];
-  var nodes=[
-    ['GLUCOSA','6 C',380,80],['G6P','Glucosa-6-P',380,150],['F6P','Fructosa-6-P',380,220],['F-1,6-BP','6 C · 2 P',380,290],['RUPTURA','6 C → 2×3 C',380,420],
-    ['DHAP','3 C',255,510],['G3P','3 C',185,600],['1,3-BPG','3 C',145,700],['3-PG','3 C',120,800],['2-PG','3 C',105,900],['PEP','3 C',100,980],['PIRUVATO 1','3 C',95,1050],
-    ['G3P','3 C',505,510],['1,3-BPG','3 C',575,600],['3-PG','3 C',615,700],['2-PG','3 C',640,800],['PEP','3 C',655,900],['PIRUVATO 2','3 C',665,980]
-  ];
-  var cards=[
-    ['G6P','Molécula','Después de glucosa',[1]],['F-1,6-BP','Molécula','Antes de ruptura',[3]],['DHAP','Molécula','Rama izquierda',[5]],['G3P','Molécula','Después de ruptura',[6,12]],['1,3-BPG','Molécula','Después de G3P',[7,13]],['3-PG','Molécula','Después de 1,3-BPG',[8,14]],['2-PG','Molécula','Después de 3-PG',[9,15]],['PEP','Molécula','Después de 2-PG',[10,16]],['Piruvato','Molécula','Final de cada rama',[11,17]],
-    ['Hexocinasa','Enzima','Glucosa → G6P',[1]],['PFK','Enzima','F6P → F-1,6-BP',[3]],['Aldolasa','Enzima','Ruptura',[4]],['GAPDH','Enzima','G3P → 1,3-BPG',[7,13]],['Fosfoglicerato cinasa','Enzima','1,3-BPG → 3-PG',[8,14]],['Piruvato cinasa','Enzima','PEP → piruvato',[10,16]]
-  ];
-  var stationLabels=['Glucosa → G6P','G6P → F6P','F6P → F-1,6-BP','Ruptura','DHAP','G3P izquierda','1,3-BPG izquierda','3-PG izquierda','2-PG izquierda','PEP izquierda','Piruvato 1','G3P derecha','1,3-BPG derecha','3-PG derecha','2-PG derecha','PEP derecha','Piruvato 2'];
-  function fmt(sec){var m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
-  function tick(){if(state.start)$('timer').textContent=fmt(Math.floor((Date.now()-state.start)/1000))}
-  function stats(){$('pearlCount').textContent=state.pearls;$('correctCount').textContent=state.correct;$('atpNet').textContent=state.atpNet;$('nadhCount').textContent=state.nadh;$('progressBar').style.width=(state.pearls/19*100)+'%'}
-  function draw(){var g=$('nodes');g.innerHTML='';nodes.forEach(function(n,i){var q=document.createElementNS('http://www.w3.org/2000/svg','g');var c=document.createElementNS('http://www.w3.org/2000/svg','circle');var r=(i===4||i>=11)?37:34;c.setAttribute('cx',n[2]);c.setAttribute('cy',n[3]);c.setAttribute('r',r);c.setAttribute('filter','url(#sh)');c.setAttribute('fill',i<state.pearls?'#e7f5ef':(i===state.pearls?'#eaf4f8':'#f7f8fa'));c.setAttribute('stroke',i<state.pearls?'#168b68':(i===state.pearls?'#147ea8':'#aeb9c4'));c.setAttribute('stroke-width',i===state.pearls?5:3);q.appendChild(c);var t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',n[2]);t.setAttribute('y',n[3]-3);t.setAttribute('text-anchor','middle');t.setAttribute('font-size',i>=11?'11':'12');t.setAttribute('font-weight','800');t.setAttribute('fill','#163047');t.textContent=n[0];q.appendChild(t);var s=document.createElementNS('http://www.w3.org/2000/svg','text');s.setAttribute('x',n[2]);s.setAttribute('y',n[3]+14);s.setAttribute('text-anchor','middle');s.setAttribute('font-size','9');s.setAttribute('fill','#60758a');s.textContent=n[1];q.appendChild(s);g.appendChild(q)});var idx=Math.min(state.pearls,nodes.length-1),n=nodes[idx];var tok=$('playerToken');tok.innerHTML='';var tc=document.createElementNS('http://www.w3.org/2000/svg','circle');tc.setAttribute('cx',n[2]);tc.setAttribute('cy',n[3]-48);tc.setAttribute('r',11);tc.setAttribute('fill','#147ea8');tc.setAttribute('stroke','#fff');tc.setAttribute('stroke-width',3);tok.appendChild(tc);var tt=document.createElementNS('http://www.w3.org/2000/svg','text');tt.setAttribute('x',n[2]);tt.setAttribute('y',n[3]-44);tt.setAttribute('text-anchor','middle');tt.setAttribute('font-size','8');tt.setAttribute('font-weight','800');tt.setAttribute('fill','#fff');tt.textContent='TÚ';tok.appendChild(tt);stats()}
-  function renderQ(){if(state.q>=questions.length){end();return}$('taskType').textContent='❓ PREGUNTA · +1 PERLA';$('taskTitle').textContent=questions[state.q][0];$('question').textContent=questions[state.q][1];$('feedback').textContent='';$('nextBtn').classList.add('hidden');var box=$('choices');box.innerHTML='';questions[state.q][2].forEach(function(o,i){var b=document.createElement('button');b.type='button';b.className='choice';b.textContent=String.fromCharCode(65+i)+') '+o;b.addEventListener('click',function(){answerQ(i,b)});box.appendChild(b)})}
-  function answerQ(i,b){var bs=[].slice.call(document.querySelectorAll('.choice'));bs.forEach(function(x){x.disabled=true});var ok=i===questions[state.q][3];if(ok){b.classList.add('ok');state.correct++;state.pearls++;if(state.q===9)state.atpNet=2;if(state.q===10)state.nadh=2;$('feedback').textContent='✓ Correcto. +1 perla.';$('feedback').style.color='var(--green)';draw()}else{b.classList.add('no');bs[questions[state.q][3]].classList.add('ok');$('feedback').textContent='✗ Incorrecto. Revisa el concepto y continúa.';$('feedback').style.color='var(--red)'}$('nextBtn').classList.remove('hidden');stats();$('nextBtn').onclick=function(){state.q++;renderQ()}}
-  function renderCards(){var deck=$('deck');deck.innerHTML='';cards.forEach(function(c,i){var b=document.createElement('button');b.type='button';b.className='card';b.disabled=!!state.done[i];b.innerHTML='<strong>'+c[0]+' · '+c[1]+'</strong><span>'+c[2]+' · +1 perla</span>';b.addEventListener('click',function(){selectCard(i)});deck.appendChild(b)})}
-  function selectCard(i){state.selectedCard=i;$('targets').classList.remove('hidden');$('targets').innerHTML='';$('feedback').textContent='Coloca '+cards[i][0]+' en la estación correcta.';$('feedback').style.color='var(--ink)';stationLabels.forEach(function(label,nodeIndex){var b=document.createElement('button');b.type='button';b.className='target';b.textContent=label;b.addEventListener('click',function(){placeCard(i,nodeIndex)});$('targets').appendChild(b)})}
-  function placeCard(i,nodeIndex){var ok=cards[i][3].indexOf(nodeIndex)>=0;if(ok){state.done[i]=true;state.bonus++;state.pearls=Math.min(19,state.pearls+1);$('feedback').textContent='🧬 ¡Bien colocado! +1 perla extra.';$('feedback').style.color='var(--green)';$('targets').classList.add('hidden');renderCards();draw();if(state.pearls>=19){$('nextBtn').textContent='🏁 Ver resultado';$('nextBtn').classList.remove('hidden');$('nextBtn').onclick=end}}else{$('feedback').textContent='No es esa estación. Inténtalo de nuevo.';$('feedback').style.color='var(--red)'}}
-  function end(){clearInterval(state.timer);$('game').classList.add('hidden');$('final').classList.remove('hidden');$('finalStudent').textContent='Jugador: '+state.name;$('finalTime').textContent=fmt(Math.floor((Date.now()-state.start)/1000));$('finalCorrect').textContent=state.correct+'/'+questions.length;$('finalBonus').textContent=state.bonus;$('finalPearls').textContent=state.pearls+'/19'}
-  function startGame(){var n=$('studentName').value.trim();if(!n){$('nameError').classList.remove('hidden');$('studentName').focus();return}$('nameError').classList.add('hidden');state.name=n;state.q=0;state.correct=0;state.bonus=0;state.pearls=0;state.atpNet=0;state.nadh=0;state.start=Date.now();$('studentLabel').textContent='Jugador: '+n;$('start').classList.add('hidden');$('final').classList.add('hidden');$('game').classList.remove('hidden');state.timer=setInterval(tick,250);draw();renderCards();renderQ();stats()}
-  function canva(){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 760 1120"><rect width="100%" height="100%" fill="#fbfaf6"/><text x="380" y="45" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#163047">CARRERA DE LA GLUCÓLISIS</text><path d="M380 80 V420 C300 450 210 500 185 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8"/><path d="M380 420 C460 450 550 500 575 590 V980" fill="none" stroke="#cbd5e1" stroke-width="8"/>'+nodes.map(function(n,i){return '<g><circle cx="'+n[2]+'" cy="'+n[3]+'" r="34" fill="#f7f8fa" stroke="#aeb9c4" stroke-width="3"/><text x="'+n[2]+'" y="'+(n[3]-3)+'" text-anchor="middle" font-family="Arial" font-size="11" font-weight="800" fill="#163047">'+n[0]+'</text><text x="'+n[2]+'" y="'+(n[3]+14)+'" text-anchor="middle" font-family="Arial" font-size="9" fill="#60758a">'+n[1]+'</text></g>'}).join('')+'<text x="380" y="1090" text-anchor="middle" font-family="Arial" font-size="18" font-weight="800" fill="#b07800">META · 2 PIRUVATOS</text></svg>';var a=document.createElement('a');a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);a.download='plantilla_canva_carrera_glucolisis.svg';document.body.appendChild(a);a.click();a.remove()}
-  $('startBtn').addEventListener('click',startGame);$('studentName').addEventListener('keydown',function(e){if(e.key==='Enter')startGame()});$('canvaBtn').addEventListener('click',canva);$('restartBtn').addEventListener('click',function(){location.reload()});
+const qs=[
+["¿Dónde ocurre la glucólisis?",["En el núcleo","En el citosol","En el lisosoma","En el aparato de Golgi"],1],
+["¿La glucólisis requiere oxígeno de manera directa?",["Sí","No","Solo al final","Solo durante la inversión"],1],
+["¿Cuál es el sustrato inicial y cuántos carbonos tiene?",["Glucosa, 6 C","Piruvato, 3 C","G3P, 3 C","Lactato, 3 C"],0],
+["¿Qué ocurre durante la fase de inversión?",["Se producen 4 ATP","Se invierten 2 ATP","Se producen 2 NADH","Se forman 2 piruvatos"],1],
+["¿Qué hace la hexocinasa con la glucosa?",["La oxida directamente","Añade un fosfato y ayuda a atraparla en la célula","La divide en dos triosas","La convierte en piruvato"],1],
+["¿Qué enzima participa en la ruptura de la fructosa-1,6-bisfosfato?",["Aldolasa","Hexocinasa","Piruvato cinasa","GAPDH"],0],
+["¿Qué sucede con el NAD+ durante la glucólisis?",["Se convierte en ATP","Acepta electrones y se convierte en NADH","Se convierte en glucosa","Se consume como enzima"],1],
+["Después de la ruptura, ¿qué molécula debe convertirse para continuar por la misma ruta?",["G3P","DHAP","Piruvato","F6P"],1],
+["¿Cuánto ATP se produce en bruto durante la fase de ganancia?",["2","4","6","8"],1],
+["¿Cuál es la ganancia neta de ATP por glucosa?",["1","2","4","6"],1],
+["¿Cuáles son los productos finales de la glucólisis?",["2 piruvatos + 2 ATP netos + 2 NADH","1 piruvato + 4 ATP + 1 NADH","2 lactatos + 2 ATP","2 acetil-CoA + 2 ATP"],0],
+["Con oxígeno disponible, ¿qué ocurre después con el piruvato?",["Se queda en el citosol necesariamente","Continúa hacia la oxidación mitocondrial","Se convierte obligatoriamente en glucosa","Se elimina de inmediato"],1],
+["¿Qué enzima cataliza F6P → fructosa-1,6-bisfosfato?",["PFK","Aldolasa","GAPDH","Piruvato cinasa"],0],
+["¿Cuántas moléculas de G3P entran a la fase de ganancia por cada glucosa?",["1","2","3","4"],1],
+["¿Qué coenzima se reduce durante la reacción de GAPDH?",["ATP","NAD+","FAD","CoA"],1],
+["¿Cuántos ATP se forman en bruto por cada molécula de G3P durante la fase de ganancia?",["1","2","3","4"],1]
+];
+
+const cards=[
+["G6P","Molécula","Después de hexocinasa",[1]],
+["F-1,6-BP","Molécula","Antes de la ruptura",[3]],
+["DHAP","Molécula","Primera molécula de una rama tras la ruptura",[5]],
+["G3P","Molécula","Triose que continúa la vía",[6,12]],
+["1,3-BPG","Molécula","Después de G3P",[7,13]],
+["3-PG","Molécula","Después de 3-PG",[8,14]],
+["2-PG","Molécula","Después de 3-PG",[9,15]],
+["PEP","Molécula","Después de 2-PG",[10,16]],
+["Piruvato","Molécula","Producto final",[11,17]],
+["Hexocinasa","Enzima","Glucosa → G6P",[1]],
+["PFK","Enzima","F6P → F-1,6-BP",[2]],
+["Aldolasa","Enzima","Ruptura",[4]],
+["GAPDH","Enzima","G3P → 1,3-BPG",[6,12]],
+["Fosfoglicerato cinasa","Enzima","1,3-BPG → 3-PG",[7,13]],
+["Fosfoglicerato mutasa","Enzima","3-PG → 2-PG",[8,14]],
+["Enolasa","Enzima","2-PG → PEP",[9,15]],
+["Piruvato cinasa","Enzima","PEP → piruvato",[10,16]]
+];
+
+/* PISTAS Y PUNTOS CLAVE (SÓLO ALGUNOS NOMBRES VISIBLES COMO ANCLAS EDUCATIVAS) */
+const labels=[
+["GLUCOSA","6 C"],           // 0: Pista inicial
+["¿ ?","6 C"],               // 1: Incógnita (G6P)
+["F6P","fructosa-6-P"],       // 2: Pista intermedia
+["¿ ?","6 C · 2 P"],         // 3: Incógnita (F-1,6-BP)
+["RUPTURA","ALDOLASA"],      // 4: Punto de Bifurcación clave
+["¿ ?","3 C"],               // 5: Incógnita (DHAP)
+["¿ ?","3 C"],               // 6: Incógnita (G3P)
+["1,3-BPG","3 C · 2×"],       // 7: Pista de inicio de ganancia
+["¿ ?","3 C · 2×"],          // 8: Incógnita (3-PG)
+["¿ ?","3 C · 2×"],          // 9: Incógnita (2-PG)
+["¿ ?","3 C · 2×"],          // 10: Incógnita (PEP)
+["PIRUVATO 1","3 C"],        // 11: Meta Rama Izq
+["¿ ?","3 C"],               // 12: Incógnita (G3P)
+["¿ ?","3 C · 2×"],          // 13: Incógnita (1,3-BPG)
+["¿ ?","3 C · 2×"],          // 14: Incógnita (3-PG)
+["¿ ?","3 C · 2×"],          // 15: Incógnita (2-PG)
+["¿ ?","3 C · 2×"],          // 16: Incógnita (PEP)
+["PIRUVATO 2","3 C"]         // 17: Meta Rama Der
+];
+
+const pos=[[380,82],[380,145],[380,208],[380,271],[380,330],[210,455],[210,535],[210,615],[210,695],[210,775],[210,835],[210,895],[550,455],[550,535],[550,615],[550,695],[550,775],[550,855]];
+
+/* SOLO ENZIMAS CLAVE VISIBLES INICIALMENTE (Aldolasa en ruptura) */
+const baseEnzymes=[["Aldolasa",475,330]];
+let placedCards=new Map();
+
+let state={name:"",q:0,correct:0,bonus:0,pearls:0,start:0,timer:null,atp:0,nadh:0,selected:null,cardDone:new Set()};
+const $=id=>document.getElementById(id);
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+
+function draw(){
+  const g=$("nodes");g.innerHTML="";
+  labels.forEach((a,i)=>{
+    let [x,y]=pos[i],group=document.createElementNS("http://www.w3.org/2000/svg","g");
+    group.setAttribute("class","node "+(i<state.pearls?"done ":"")+(i===state.pearls?"current ":"")+(i===4||i>=11?"meta":""));
+    group.dataset.i=i;
+    
+    let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("class","pearl");
+    c.setAttribute("cx",x);c.setAttribute("cy",y);
+    c.setAttribute("r",(i===4||i>=11)?32:27);
+    group.appendChild(c);
+    
+    // Si el jugador ya colocó la tarjeta en esta estación, muestra el nombre revelado. Si no, muestra la etiqueta con incógnita.
+    let displayText = placedCards.has("node_"+i) ? placedCards.get("node_"+i) : a[0];
+    
+    let t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("x",x);t.setAttribute("y",y-5);
+    t.textContent=displayText;
+    group.appendChild(t);
+    
+    let s=document.createElementNS("http://www.w3.org/2000/svg","text");
+    s.setAttribute("class","small");
+    s.setAttribute("x",x);s.setAttribute("y",y+12);
+    s.textContent=a[1];
+    group.appendChild(s);
+    
+    group.addEventListener("click",()=>{
+      if(state.selected!==null){
+        place(state.selected,i);
+      } else if(i===state.pearls && state.q<qs.length){
+        openQuestionModal();
+      }
+    });
+    g.appendChild(group);
+  });
+
+  // Renderizar Enzimas
+  const eg=$("enzymes");eg.innerHTML="";
+  baseEnzymes.forEach(e=>{
+    let t=document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("class","enzyme");
+    t.setAttribute("x",e[1]);t.setAttribute("y",e[2]);
+    t.textContent=e[0];
+    eg.appendChild(t);
+  });
+  
+  // Dibujar enzimas reveladas por tarjetas
+  placedCards.forEach((val, key)=>{
+    if(key.startsWith("enz_")){
+      let [, name, x, y] = val.split("|");
+      let t=document.createElementNS("http://www.w3.org/2000/svg","text");
+      t.setAttribute("class","enzyme");
+      t.setAttribute("x",x);t.setAttribute("y",y);
+      t.textContent=name;
+      eg.appendChild(t);
+    }
+  });
+
+  const tk=$("token");tk.innerHTML="";
+  let idx=Math.min(state.pearls,17),[x,y]=pos[idx];
+  let c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("class","token");
+  c.setAttribute("cx",x);c.setAttribute("cy",y-43);
+  c.setAttribute("r",12);
+  tk.appendChild(c);
+  
+  let t=document.createElementNS("http://www.w3.org/2000/svg","text");
+  t.setAttribute("class","tokenText");
+  t.setAttribute("x",x);t.setAttribute("y",y-43);
+  t.textContent="TÚ";
+  tk.appendChild(t);
+
+  $("bar").style.width=Math.min(100,state.pearls/18*100)+"%";
+}
+
+function stats(){
+  $("pearls").textContent=state.pearls;
+  $('atp').textContent=state.atp;
+  $('nadh').textContent=state.nadh;
+}
+
+function openQuestionModal(){
+  if(state.q>=qs.length) return;
+  $("qTitle").textContent="Estación "+(state.pearls+1)+" · Pregunta "+(state.q+1)+" de "+qs.length;
+  $("question").textContent=qs[state.q][0];
+  let box=$("choices");box.innerHTML="";
+  qs[state.q][1].forEach((c,i)=>{
+    let b=document.createElement("button");
+    b.className="choice";b.type="button";b.textContent=c;
+    b.addEventListener("click",()=>answer(i,b));
+    box.appendChild(b);
+  });
+  $("feedback").textContent="";
+  $("nextQBtn").style.display="none";
+  $("qModal").style.display="flex";
+}
+
+function closeQuestionModal(){
+  $("qModal").style.display="none";
+}
+
+function answer(i,b){
+  [...document.querySelectorAll(".choice")].forEach(x=>x.disabled=true);
+  let ok=i===qs[state.q][2];
+  b.classList.add(ok?"ok":"no");
+  if(ok){
+    state.correct++;
+    state.pearls=Math.min(18,state.pearls+1);
+    $("feedback").textContent="✓ ¡Correcto! Avanzas a la siguiente estación del mapa.";
+    if(state.q===8)state.atp=4;
+    if(state.q===9)state.atp=2;
+    if(state.q===6)state.nadh=1;
+    if(state.q===10||state.q===14)state.nadh=2;
+    stats();
+    draw();
+  } else {
+    $("feedback").textContent="✗ No es correcto, pero tu avatar avanza para explorar la vía.";
+    state.pearls=Math.min(18,state.pearls+1);
+    stats();
+    draw();
+  }
+  state.q++;
+  $("nextQBtn").style.display="inline-block";
+}
+
+$("nextQBtn").addEventListener("click",()=>{
+  closeQuestionModal();
+  if(state.q<qs.length){
+    setTimeout(openQuestionModal, 400);
+  }
 });
+
+function renderCards(){
+  let box=$("cards");box.innerHTML="";
+  cards.forEach((c,i)=>{
+    let b=document.createElement("button");
+    b.type="button";
+    b.className="cardBtn"+(state.selected===i?" selected":"");
+    b.disabled=state.cardDone.has(i);
+    b.innerHTML="<strong>"+c[0]+" · "+c[1]+"</strong><span>"+c[2]+"</span>";
+    b.addEventListener("click",()=>{
+      state.selected=i;
+      renderCards();
+    });
+    box.appendChild(b);
+  });
+}
+
+function place(ci,ni){
+  if(state.selected===null)return;
+  let card = cards[ci];
+  let correct=card[3].includes(ni);
+  
+  if(correct){
+    state.cardDone.add(ci);
+    state.selected=null;
+    state.bonus++;
+    state.pearls=Math.min(18,state.pearls+1);
+    
+    // Revelar el nombre en el mapa
+    if(card[1]==="Molécula"){
+      placedCards.set("node_"+ni, card[0]);
+    } else {
+      let [x,y] = pos[ni];
+      placedCards.set("enz_"+ci, "enz|"+card[0]+"|"+(x>380? x+35 : x-100)+"|"+(y));
+    }
+    
+    alert("🧬 ¡Excelente! Has identificado la estación: "+card[0]+". +1 perla extra.");
+    renderCards(); draw(); stats();
+    if(state.pearls>=18 || state.cardDone.size===cards.length) $("finishBtn").style.display="block";
+  } else {
+    alert("Esa tarjeta no corresponde a esa estación. Revisa el número de carbonos o la posición e inténtalo de nuevo.");
+  }
+}
+
+function start(){
+  let n=$("name").value.trim();
+  if(!n){$("name").focus();return;}
+  state.name=n;
+  state.start=Date.now();
+  $("start").style.display="none";
+  $("game").style.display="block";
+  $("student").textContent="Biomanauta: "+n;
+  draw();
+  renderCards();
+  stats();
+  state.timer=setInterval(()=>$("time").textContent=fmt(Math.floor((Date.now()-state.start)/1000)),1000);
+  
+  setTimeout(openQuestionModal, 600);
+}
+
+function finish(){
+  if($("final").style.display==="block")return;
+  clearInterval(state.timer);
+  $("game").style.display="none";
+  $("final").style.display="block";
+  let sec=Math.floor((Date.now()-state.start)/1000);
+  $("finalStudent").textContent="Jugador: "+state.name;
+  $("finalTime").textContent=fmt(sec);
+  $("finalPearls").textContent=state.pearls;
+  $("finalCorrect").textContent=state.correct;
+  $("finalBonus").textContent=state.bonus;
+}
+
+$("startBtn").addEventListener("click",start);
+$("name").addEventListener("keydown",e=>{if(e.key==="Enter")start()});
+$("restart").addEventListener("click",()=>location.reload());
+$("finishBtn").addEventListener("click",finish);
 </script>
 </body>
 </html>
